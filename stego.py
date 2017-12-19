@@ -14,7 +14,7 @@ def open_image(path):
         img = cv2.imread(path + '.bmp')
         return(img)
 
-def process_image(path_img, path_golo, output_image):
+def process_image(path_img, path_golo):
     img = open_image(path_img)
     f = np.fft.fft2(img)
     fshift = np.fft.fftshift(f)
@@ -35,8 +35,8 @@ def process_image(path_img, path_golo, output_image):
     img_stego_back = np.fft.ifft2(f_ishift_golo)
     img_stego_back = np.abs(img_stego_back)
 
-    cv2.imwrite(output_image + 'test.jpg', img_back)
-    cv2.imwrite(output_image + 'test_golo.jpg', img_stego_back)
+    cv2.imwrite(r'/test/test.jpg', img_back)
+    cv2.imwrite(r'/test/test_golo.jpg', img_stego_back)
 
 #    Image.open(output_image + 'test.bmp').save(output_image + '.jpg')
 #    Image.open(output_image + 'test_golo.bmp').save(output_image + '_golo.bmp')

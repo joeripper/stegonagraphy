@@ -13,66 +13,67 @@ class StegoImage(QWidget):
 
         self.adressFirstImage = ''
         self.adressSecondImage = ''
-        self.imagelayout = QGridLayout()
+        self.mainLayout = QGridLayout()
 
         self.imageLabel1 = QLabel()
-        self.imageLabel1.setAlignment(Qt.AlignCenter)
         self.imageLabel1.resize(300, 300)
         self.imageLabel2 = QLabel()
-        self.imageLabel2.setAlignment(Qt.AlignCenter)
         self.imageLabel2.resize(300, 300)
-        self.imagelayout.addWidget(self.imageLabel1, 0, 0)
-        self.imagelayout.addWidget(self.imageLabel2, 0, 1)
 
         self.createButtonsLayout()
 
-        self.mainLayout = QVBoxLayout()
 
-#        mainLayout.addWidget(self.imageLabel1)
-#        mainLayout.addWidget(self.imageLabel2)
-
-        self.mainLayout.addLayout(self.buttonsLayout)
         self.setLayout(self.mainLayout)
-
-#        self.shootScreen()
-#        self.delaySpinBox.setValue(5)
 
         self.setWindowTitle("stego image")
         self.resize(200, 50)
 
     def createButtonsLayout(self):
         self.loadButton1 = self.createButton("firstImage", self.show_dialog)
-
         self.loadButton2 = self.createButton("secondImage", self.show_dialog)
-
         self.processButton = self.createButton("run", self.show_dialog)
+        self.unprocessButton = self.createButton("giveGolo", self.show_new_window)
 
-        self.buttonsLayout = QHBoxLayout()
-        self.buttonsLayout.addStretch()
-        self.buttonsLayout.addWidget(self.loadButton1)
-        self.buttonsLayout.addWidget(self.loadButton2)
-        self.buttonsLayout.addWidget(self.processButton)
-        self.buttonsLayout.setAlignment(Qt.AlignCenter)
+        self.mainLayout.addWidget(self.loadButton1, 1, 0)
+        self.mainLayout.addWidget(self.loadButton2, 1, 1)
+        self.mainLayout.addWidget(self.processButton, 1, 2)
+        self.mainLayout.addWidget(self.unprocessButton, 1, 3)
 
     def createButton(self, text, member):
         button = QPushButton(text)
         button.clicked.connect(member)
-        return button
+        return(button)
 
     def show_dialog(self):
-        self.mainLayout.addLayout(self.imagelayout)
+        self.mainLayout.addWidget(self.imageLabel1, 0, 0, 1, 2)
+        self.mainLayout.addWidget(self.imageLabel2, 0, 2, 1, 2)
+
         sender = self.sender()
         fname = QFileDialog.getOpenFileName(self, 'Open Image', os.getcwd())[0]
-        pixmap = QPixmap(fname)
+        pixmap = QPixmap(fname).scaled(300, 300)
         if sender.text() == "firstImage":
             self.imageLabel1.setPixmap(pixmap)
             self.adressFirstImage = fname
         elif sender.text() == "secondImage":
             self.imageLabel2.setPixmap(pixmap)
             self.adressSecondImage = fname
+#        elif sender.text() == "run":
+#            stego.process_image(self.adressFirstImage, self.adressSecondImage, fname)
         else:
-            stego.process_image(self.adressFirstImage, self.adressSecondImage, fname)
+            pass
 
+    def show_new_window(self):
+        self.processWindow = QWidget()
+        self.processLayout = QGridLayout()
+        self.processLabel = QLabel()
+        tmp = stego.process_image(self.adressFirstImage, self.adressSecondImage)
+        self.processPixmap = QPixmap()
+
+        self.processLabel.setPixmap(self.processPixmap)
+        self.processLayout.addWidget(self.processLabel)
+        self.processWindow.setWindowTitle("new window")
+        self.processWindow.setLayout(self.processLayout)
+        self.processWindow.show()
 
 
 
